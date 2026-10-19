@@ -1,0 +1,339 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Event Management System</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        header {
+            background: #17365d;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        nav {
+            background: #2563eb;
+            padding: 12px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 15px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        input, select, button {
+            padding: 10px;
+            margin: 6px 0;
+            border-radius: 5px;
+            border: 1px solid #cbd5e1;
+        }
+
+        input, select {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #17365d;
+        }
+
+        .events {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(230px, 1fr));
+            gap: 20px;
+        }
+
+        .event-card {
+            background: white;
+            padding: 18px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px #0001;
+        }
+
+        .event-card h3 {
+            color: #2563eb;
+        }
+
+        .event-card button {
+            width: 100%;
+        }
+
+        .form-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        #message {
+            color: green;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #17365d;
+            color: white;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Company Event Management System</h1>
+    <p>Manage, Explore and Register for Company Events</p>
+</header>
+
+<nav>
+    <a href="#home">Home</a>
+    <a href="#events">Events</a>
+    <a href="#register">Registration</a>
+</nav>
+
+<div class="container" id="home">
+    <h2>Welcome to Our Company</h2>
+    <p>
+        This system helps employees discover upcoming company
+        events, workshops, conferences and team-building activities.
+    </p>
+
+    <section id="events">
+        <h2>Upcoming Events</h2>
+
+        <input
+            type="text"
+            id="search"
+            placeholder="Search events by name..."
+            oninput="displayEvents()"
+        >
+
+        <div class="events" id="eventList"></div>
+    </section>
+
+    <section class="form-box" id="register">
+        <h2>Event Registration</h2>
+
+        <form id="registrationForm">
+            <label>Full Name</label>
+            <input type="text" id="name"
+                   placeholder="Enter your name" required>
+
+            <label>Email Address</label>
+            <input type="email" id="email"
+                   placeholder="Enter your email" required>
+
+            <label>Select Event</label>
+            <select id="eventName" required>
+                <option value="">Select an event</option>
+            </select>
+
+            <button type="submit">Register Now</button>
+        </form>
+
+        <p id="message"></p>
+    </section>
+</div>
+
+<footer>
+    <p>Company Event Management System | College Project</p>
+</footer>
+
+<script>
+    // Sample event data for demonstration.
+    // Replace with data from your own API when available.
+
+    const sampleEvents = [
+        {
+            id: 1,
+            title: "Annual Company Meeting",
+            date: "2026-11-10",
+            location: "Main Conference Hall",
+            description: "Discuss company goals and achievements."
+        },
+        {
+            id: 2,
+            title: "Technical Workshop",
+            date: "2026-11-15",
+            location: "Training Room",
+            description: "Learn new technologies and practical skills."
+        },
+        {
+            id: 3,
+            title: "Team Building Event",
+            date: "2026-11-20",
+            location: "Company Campus",
+            description: "Improve teamwork and communication."
+        }
+    ];
+
+    let events = [];
+
+    // Display events on the web page.
+    function displayEvents() {
+        const searchText =
+            document.getElementById("search")
+                .value.toLowerCase();
+
+        const eventList =
+            document.getElementById("eventList");
+
+        const filteredEvents = events.filter(event =>
+            event.title.toLowerCase().includes(searchText)
+        );
+
+        eventList.innerHTML = "";
+
+        if (filteredEvents.length === 0) {
+            eventList.textContent = "No events found.";
+            return;
+        }
+
+        filteredEvents.forEach(event => {
+            const card = document.createElement("div");
+            card.className = "event-card";
+
+            const title = document.createElement("h3");
+            title.textContent = event.title;
+
+            const date = document.createElement("p");
+            date.textContent = "Date: " + event.date;
+
+            const location = document.createElement("p");
+            location.textContent = "Location: " + event.location;
+
+            const description = document.createElement("p");
+            description.textContent = event.description;
+
+            const button = document.createElement("button");
+            button.textContent = "Register";
+            button.type = "button";
+            button.addEventListener("click", () => {
+                document.getElementById("eventName").value =
+                    String(event.id);
+
+                document.getElementById("register")
+                    .scrollIntoView({ behavior: "smooth" });
+            });
+
+            card.append(title, date, location, description, button);
+            eventList.appendChild(card);
+        });
+    }
+
+    // Populate the registration dropdown.
+    function loadEventOptions() {
+        const select = document.getElementById("eventName");
+
+        events.forEach(event => {
+            const option = document.createElement("option");
+            option.value = String(event.id);
+            option.textContent = event.title;
+            select.appendChild(option);
+        });
+    }
+
+    // Connect this function to a real events API.
+    async function loadEvents() {
+        const API_URL = ""; // Add your API URL here.
+
+        if (API_URL) {
+            try {
+                const response = await fetch(API_URL);
+
+                if (!response.ok) {
+                    throw new Error("API request failed");
+                }
+
+                const data = await response.json();
+                events = Array.isArray(data)
+                    ? data
+                    : data.events;
+
+                if (!Array.isArray(events)) {
+                    throw new Error("Invalid event data");
+                }
+            } catch (error) {
+                console.error(error);
+                events = sampleEvents;
+            }
+        } else {
+            events = sampleEvents;
+        }
+
+        loadEventOptions();
+        displayEvents();
+    }
+
+    // Demonstration registration.
+    // A backend API is needed to save registrations permanently.
+    document.getElementById("registrationForm")
+        .addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const name =
+                document.getElementById("name").value.trim();
+
+            const email =
+                document.getElementById("email").value.trim();
+
+            const selectedId =
+                document.getElementById("eventName").value;
+
+            const selectedEvent =
+                events.find(item =>
+                    String(item.id) === selectedId
+                );
+
+            if (!selectedEvent) {
+                document.getElementById("message").textContent =
+                    "Please select an event.";
+                return;
+            }
+
+            document.getElementById("message").textContent =
+                "Thank you, " + name +
+                "! Demo registration selected for " +
+                selectedEvent.title +
+                ". No data has been saved to a server.";
+
+            // For a real application, send the form data to
+            // your backend using fetch() and a POST request.
+        });
+
+    // Start the application.
+    loadEvents();
+</script>
+
+</body>
+</html>
+```
